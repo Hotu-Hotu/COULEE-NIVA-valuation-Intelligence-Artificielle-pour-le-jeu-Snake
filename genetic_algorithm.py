@@ -15,11 +15,19 @@ class GeneticAlgorithm:
         for s in self.population:
             s.calculate_fitness()
 
+    #Sélection par tournoi (choix plus probable des meilleurs) évité convergence prématurée
     def select(self):
         self.population.sort(key=lambda s: s.fitness, reverse=True)
         self.best_fitness = self.population[0].fitness
         self.history.append(self.best_fitness)
-        return self.population[:self.size//4]
+
+        selected = []
+        for _ in range(self.size // 2):
+            contenders = random.sample(self.population, 3)
+            selected.append(max(contenders, key=lambda s: s.fitness))
+
+        return selected
+
 
     def reproduce(self, selected):
         new_pop = selected[:5]  # élitisme

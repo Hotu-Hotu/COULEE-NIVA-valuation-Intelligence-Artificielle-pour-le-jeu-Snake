@@ -83,10 +83,17 @@ class Snake:
         out = self.network.forward(self.get_vision(food))
         self.turn(DIRECTIONS[np.argmax(out)])
 
+
+    #Enlever mouvement aléatoire, fitness basé sur score et survie
     def calculate_fitness(self):
-        self.fitness = (
-            self.score * 100
-            + self.steps * 0.1
-            - self.steps_without_food * 0.2
-        )
-        return max(0, self.fitness)
+        fitness = 0
+
+        fitness += self.score * 500        # priorité
+        fitness += self.steps * 0.05       # survivre un peu
+        fitness -= self.steps_without_food * 1.0  # punition
+
+        if self.score == 0:
+            fitness -= 200                 # snake inutile
+
+        self.fitness = max(0, fitness)
+        return self.fitness
